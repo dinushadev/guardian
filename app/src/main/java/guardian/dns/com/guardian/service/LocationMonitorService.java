@@ -1,8 +1,10 @@
 package guardian.dns.com.guardian.service;
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,6 +14,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import guardian.dns.com.guardian.data.LocationDataContract;
+import guardian.dns.com.guardian.data.LocationDbHelper;
 
 public class LocationMonitorService extends Service {
 
@@ -27,12 +32,20 @@ public class LocationMonitorService extends Service {
     LocationManager locationManager ;
     String provider;
 
+    LocationDbHelper dbHelper;
+
+    SQLiteDatabase db ;
+
     public LocationMonitorService() {
 
     }
 
     @Override
     public void onCreate() {
+
+         dbHelper = new LocationDbHelper(getApplicationContext());
+
+         db = dbHelper.getWritableDatabase();
 
         // Getting LocationManager object
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -51,6 +64,8 @@ public class LocationMonitorService extends Service {
 
             locationManager.requestLocationUpdates(provider, LOCATION_INTERVAL, LOCATION_DISTANCE,listener);
 
+
+
           /*  if(location!=null)
                 onLocationChanged(location);
             else
@@ -63,18 +78,16 @@ public class LocationMonitorService extends Service {
 
     }
 
-    private void onLocationChanged(Location location) {
-
-    }
 
     @Override
     public void onDestroy()
     {
         Log.e(TAG, "onDestroy");
         super.onDestroy();
-        if (mLocationManager != null) {
-            mLocationManager.removeUpdates(listener);
+        if (locationManager != null) {
+            locationManager.removeUpdates(listener);
         }
+
     }
 
 
@@ -92,7 +105,6 @@ public class LocationMonitorService extends Service {
         Log.i("LocationMonitorService", "Received start id " + startId + ": " + intent);
         String mood = intent.getStringExtra("APP_MOOD");
         RUNNING_MOOD = mood;
-
 
         return START_STICKY;
     }
@@ -116,7 +128,7 @@ public class LocationMonitorService extends Service {
 
         public MyLocationListener(String provider)
         {
-            Log.e(TAG, "LocationListener  oooooooo" + provider);
+            Log.e(TAG, "LocationListener  " + provider);
             mLastLocation = new Location(provider);
         }
 
@@ -125,6 +137,7 @@ public class LocationMonitorService extends Service {
         {
             Log.e(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
+            updateData(location);
             //onLocationChanged(location);
         }
 
@@ -144,6 +157,24 @@ public class LocationMonitorService extends Service {
         {
             Log.e(TAG, "onStatusChanged: " + provider);
         }
+    }
+
+    private void updateData(Location location) {
+
+
+// Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(LocationDataContract.TrackEntry.COLUMN_NAME_LAT, location.getLatitude());
+        values.put(LocationDataContract.TrackEntry.COLUMN_NAME_LON, location.getLongitude());
+        values.put(LocationDataContract.TrackEntry.COLUMN_NAME_TIME, location.getTime());
+
+// Insert the new row, returning the primary key value of the new row
+        long newRowId;
+        newRowId = db.insert(
+                LocationDataContract.TrackEntry.TABLE_NAME,
+               null,
+                values);
+        Log.i(TAG,"New row inserted.."+newRowId);
     }
 
   /*  LocationListener[] mLocationListeners = new LocationListener[] {
