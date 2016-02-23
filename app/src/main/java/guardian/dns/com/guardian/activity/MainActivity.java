@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +24,11 @@ import guardian.dns.com.guardian.service.LocationMonitorService;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     ToggleButton startLearningBtn ;
+    Button showMapBtn ;
+    Button hideButn;
 
     LocationMonitorService mService;
     boolean mBound = false;
@@ -44,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        showMapBtn = (Button)findViewById(R.id.showMapBtn);
+        showMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         startLearningBtn = (ToggleButton)findViewById(R.id.learnBtn);
         startLearningBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -57,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        hideButn = (Button) findViewById(R.id.hideBtn);
+        hideButn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.finish();
+            }
+        });
+
     }
 
 
@@ -65,9 +87,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-      //  Intent intent = new Intent(this, LocationMonitorService.class);
-     //   bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(this, LocationMonitorService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
+        Log.d(TAG, "mService: " + mConnection);
         if(mService!=null && mService.getRunningMood()!=null ){
             if(mService.getRunningMood().equals(Constant.LEARNING_MOOD)){
                 startLearningBtn.setChecked(true);
@@ -101,9 +124,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startLearning(){
-       /* Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
+       Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
         locationServiceIntent.putExtra("APP_MOOD", Constant.LEARNING_MOOD);
-        startService(locationServiceIntent);*/
+        startService(locationServiceIntent);
+
 
         Intent intent = new Intent(this, LocationMonitorService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);

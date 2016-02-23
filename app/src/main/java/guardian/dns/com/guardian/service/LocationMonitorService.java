@@ -20,13 +20,15 @@ import guardian.dns.com.guardian.data.LocationDbHelper;
 
 public class LocationMonitorService extends Service {
 
+    private static final String TAG = "LocationMonitorService";
+
     private final IBinder mBinder = new LocalBinder();
     MyLocationListener listener;
 
-    private static final String TAG = "LocationMonitorService";
+
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 30000;
-    private static final float LOCATION_DISTANCE = 0;
+    private static final float LOCATION_DISTANCE = 500;
     private static String RUNNING_MOOD ;
 
     LocationManager locationManager ;
