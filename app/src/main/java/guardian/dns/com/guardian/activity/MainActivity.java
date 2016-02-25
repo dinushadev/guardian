@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ToggleButton startLearningBtn ;
     Button showMapBtn ;
     Button hideButn;
+    Button guardBtn;
 
     LocationMonitorService mService;
     boolean mBound = false;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Sorry, This feature under development", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -79,6 +80,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        guardBtn = (Button) findViewById(R.id.gardBtn);
+        guardBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Snackbar.make(v, "Sorry, This feature under development", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
     }
 
 
@@ -87,10 +98,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Intent intent = new Intent(this, LocationMonitorService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        Log.d(TAG, "mService: " + mConnection);
+
+        Log.d(TAG, "mConnection: " + mConnection + " Service:" + mService);
         if(mService!=null && mService.getRunningMood()!=null ){
             if(mService.getRunningMood().equals(Constant.LEARNING_MOOD)){
                 startLearningBtn.setChecked(true);
@@ -99,6 +109,20 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(mConnection);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, LocationMonitorService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -126,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
     private void startLearning(){
        Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
         locationServiceIntent.putExtra("APP_MOOD", Constant.LEARNING_MOOD);
-        startService(locationServiceIntent);
-
+       ComponentName serviceName= startService(locationServiceIntent);
+        Log.d(TAG,serviceName.flattenToString());
 
         Intent intent = new Intent(this, LocationMonitorService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -136,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopLearning(){
         //stopService()
-       /* Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
-        stopService(locationServiceIntent);*/
         unbindService(mConnection);
+        Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
+        stopService(locationServiceIntent);
+
     }
 
 

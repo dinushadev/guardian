@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="fill_horizontal"
+    android:background="@color/colorHomeLearn"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.MainActivity"
+    tools:showIn="@layout/activity_main"
+    android:weightSum="1">
+
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="0.11">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="WELCOME TO GUARDIAN"
+            android:id="@+id/textView"
+            android:textColor="@color/common_plus_signin_btn_text_dark"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.37" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="fill_horizontal"
+        android:layout_weight="0.13"
+        android:weightSum="1">
+
+        <ToggleButton
+            android:layout_height="157dp"
+            android:layout_width="121dp"
+            android:textOn="LEARNING..."
+            android:textOff="LET THE APP LEARN"
+            android:elevation="10dp"
+            android:id="@+id/learnBtn"
+            android:drawableTop="@drawable/guru_2"
+            android:layout_weight="0.43" />
+
+        <ToggleButton
+            android:layout_height="157dp"
+            android:layout_width="121dp"
+            android:textOff="Gard"
+            android:drawableTop="@drawable/shield"
+            android:id="@+id/gardBtn"
+            android:layout_weight="0.43" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:layout_width="173dp"
+            android:layout_height="wrap_content"
+            android:text="Show Route in MAP"
+            android:drawableLeft="@drawable/ic_pin_drop_24dp"
+            android:id="@+id/showMapBtn"
+
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="GOTO BACKGROUND"
+            android:drawableLeft="@drawable/ic_cast_light"
+            android:id="@+id/hideBtn"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

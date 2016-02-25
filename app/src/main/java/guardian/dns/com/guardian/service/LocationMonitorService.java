@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,12 +16,17 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
 import guardian.dns.com.guardian.data.LocationDataContract;
 import guardian.dns.com.guardian.data.LocationDbHelper;
 
 public class LocationMonitorService extends Service {
 
     private static final String TAG = "LocationMonitorService";
+    private static final float MAX_DISTANCE_OF_TWO_POINT = 500;
 
     private final IBinder mBinder = new LocalBinder();
     MyLocationListener listener;
@@ -38,6 +44,9 @@ public class LocationMonitorService extends Service {
 
     SQLiteDatabase db ;
 
+    ArrayList<LatLng> learnedPoints ;
+
+
     public LocationMonitorService() {
 
     }
@@ -48,6 +57,9 @@ public class LocationMonitorService extends Service {
          dbHelper = new LocationDbHelper(getApplicationContext());
 
          db = dbHelper.getWritableDatabase();
+
+         learnedPoints = getRouteData();
+        Log.d(TAG,"Point List Loaded"+ learnedPoints);
 
         // Getting LocationManager object
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -105,8 +117,11 @@ public class LocationMonitorService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("LocationMonitorService", "Received start id " + startId + ": " + intent);
-        String mood = intent.getStringExtra("APP_MOOD");
-        RUNNING_MOOD = mood;
+       if(intent != null){
+           String mood = intent.getStringExtra("APP_MOOD");
+           RUNNING_MOOD = mood;
+
+       }
 
         return START_STICKY;
     }
@@ -138,8 +153,17 @@ public class LocationMonitorService extends Service {
         public void onLocationChanged(Location location)
         {
             Log.e(TAG, "onLocationChanged: " + location);
-            mLastLocation.set(location);
-            updateData(location);
+
+          //  mLastLocation.set(location);
+            if(!isCoverThisPoint(location)){
+
+                updateData(location);
+                if(learnedPoints == null){
+                    learnedPoints = new ArrayList<>();
+                }
+                LatLng tmpLatLog = new LatLng(location.getLatitude(),location.getLongitude());
+                learnedPoints.add(tmpLatLog);
+            }
             //onLocationChanged(location);
         }
 
@@ -149,8 +173,7 @@ public class LocationMonitorService extends Service {
         }
 
         @Override
-        public void onProviderEnabled(String provider)
-        {
+        public void onProviderEnabled(String provider) {
             Log.e(TAG, "onProviderEnabled: " + provider);
         }
 
@@ -159,6 +182,24 @@ public class LocationMonitorService extends Service {
         {
             Log.e(TAG, "onStatusChanged: " + provider);
         }
+    }
+
+    private boolean isCoverThisPoint(Location location) {
+        boolean status =false;
+        if(learnedPoints != null){
+            for(LatLng loc :learnedPoints){
+                Location location1 = new Location("");
+                location1.setLatitude(loc.latitude);
+                location1.setLongitude(loc.longitude);
+                float distance = location.distanceTo(location1);
+                Log.d(TAG,"Distance:"+distance+" Acuracy:"+location.getAccuracy());
+                if(Math.abs(distance) < MAX_DISTANCE_OF_TWO_POINT){
+                    status =true;
+                    break;
+                }
+            }
+        }
+        return status;
     }
 
     private void updateData(Location location) {
@@ -177,6 +218,34 @@ public class LocationMonitorService extends Service {
                null,
                 values);
         Log.i(TAG,"New row inserted.."+newRowId);
+    }
+
+    private ArrayList<LatLng> getRouteData(){
+        Cursor cursor = db.rawQuery("select * from track", null);
+        ArrayList<LatLng> pointList =null;
+
+        Log.i(TAG, "Pin count: " + cursor.getCount());
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+            pointList = new ArrayList<>();
+            LatLng latLng = null;
+            int latCoumnIndex = cursor.getColumnIndex(LocationDataContract.TrackEntry.COLUMN_NAME_LAT);
+            int lonCoumnIndex = cursor.getColumnIndex(LocationDataContract.TrackEntry.COLUMN_NAME_LON);
+            while (!cursor.isAfterLast()){
+                double lat = cursor.getDouble(latCoumnIndex);
+                double lon = cursor.getDouble(lonCoumnIndex);
+                Log.i(TAG, "LAT:"+lat+ " LON:"+lon);
+                latLng = new LatLng(lat,lon);
+                pointList.add(latLng);
+                cursor.moveToNext();
+
+            }
+        }else{
+            Toast.makeText(getBaseContext(), "No Learned Geo data Found", Toast.LENGTH_SHORT).show();
+        }
+
+        return pointList;
+
     }
 
   /*  LocationListener[] mLocationListeners = new LocationListener[] {

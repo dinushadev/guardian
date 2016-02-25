@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         db = dbHelper.getReadableDatabase();
 
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_map1);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -64,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+       // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         // Add a marker in Sydney and move the camera
        /* LatLng sydney = new LatLng(-34, 151);
@@ -78,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<LatLng> pointList = getRouteData();
 
         if(pointList != null){
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointList.get(0), 14));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointList.get(0), 13));
 /*
             PolygonOptions polygonOptions = new PolygonOptions().addAll(pointList).strokeColor(Color.RED)
                     .fillColor(Color.BLUE);
@@ -88,7 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 CircleOptions circleOptions = new CircleOptions()
                         .center(latLon)
                         .radius(500)
-                        .strokeColor(Color.GREEN)
+                        .strokeWidth(5)
+                        .strokeColor(Color.argb(60, 51, 224, 51))
                         .fillColor(Color.argb(50,51,204,51)); // In meters
 
                 // Get back the mutable Circle
