@@ -57,7 +57,8 @@
         <ToggleButton
             android:layout_height="157dp"
             android:layout_width="121dp"
-            android:textOff="Gard"
+            android:textOff="Guard"
+            android:textOn="Guarding..."
             android:drawableTop="@drawable/shield"
             android:id="@+id/gardBtn"
             android:layout_weight="0.43" />

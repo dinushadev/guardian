@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array  name="learningDaysValues">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>14</item>
+
+    </string-array>
+
+    <string-array name="learningDays">
+        <item>1 Day</item>
+        <item>2 Days</item>
+        <item>4 Days</item>
+        <item>8 Days</item>
+        <item>14 Days</item>
+
+    </string-array>
+    <string-array  name="destanceValues">
+        <item>10</item>
+        <item>20</item>
+        <item>40</item>
+        <item>80</item>
+        <item>200</item>
+        <item>400</item>
+        <item>800</item>
+
+    </string-array>
+
+    <string-array name="destance">
+        <item>10 m</item>
+        <item>20 m</item>
+        <item>40 m</item>
+        <item>80 m</item>
+        <item>200 m</item>
+        <item>400 m</item>
+        <item>800 m</item>
+    </string-array>
+    <string-array  name="accuracyValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+
+    </string-array>
+    <string-array  name="accuracy">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+
+    </string-array>
+</resources>

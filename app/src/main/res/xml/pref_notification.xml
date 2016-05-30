@@ -1,0 +1,61 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <PreferenceCategory android:title="Gardiant settings" >
+    <!--<SwitchPreference
+        android:defaultValue="true"
+        android:key="notifications_new_message"
+        android:title="@string/pref_title_new_message_notifications" />-->
+<ListPreference
+    android:title="App learning days"
+    android:dialogTitle="App learning days"
+    android:entries="@array/learningDays"
+    android:key="learnig_days"
+    android:enabled="false"
+    android:summary="Default value of learning "
+    android:entryValues="@array/learningDaysValues"
+    android:defaultValue="14" />
+
+    <!-- Allows the user to choose a ringtone in the 'notification' category. -->
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
+        <EditTextPreference
+            android:key="guardian_contact_no"
+            android:title="Guardian mobile number*"
+            android:inputType="phone"
+            android:persistent="true"
+            android:dialogTitle="Contact No"
+            android:dialogMessage="Mobile number"
+            android:defaultValue="" />
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+
+
+        <ListPreference
+            android:title="Possible max deviation "
+            android:dialogTitle="Max possible deviation"
+            android:entries="@array/destance"
+            android:key="max_deviation"
+            android:summary="Max deviation in usual route in meters, 500m"
+            android:entryValues="@array/destanceValues"
+            android:defaultValue="500" />
+      <!--  <ListPreference
+            android:title="Distance "
+            android:dialogTitle="Max possible deviation"
+            android:entries="@array/destance"
+            android:key="max_radius"
+            android:summary="Max deviation in usual route in meters, 500m"
+            android:entryValues="@array/destanceValues"
+            android:defaultValue="500" />
+-->
+        <ListPreference
+            android:title="Accuracy "
+            android:dialogTitle="Accuracy"
+            android:entries="@array/accuracy"
+            android:key="accuracy"
+            android:summary="Accuracy level. (1 is mini 5 is max). [Do not change in Guard mood] "
+            android:entryValues="@array/accuracyValues"
+            android:defaultValue="3" />
+
+    </PreferenceCategory>
+</PreferenceScreen>
