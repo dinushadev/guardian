@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import guardian.dns.com.guardian.activity.MainActivity;
 import guardian.dns.com.guardian.data.LocationDataContract;
@@ -37,7 +38,7 @@ public class LocationMonitorService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     LearnLocationListener listener;
-
+    private List<Location> movingPointList = new ArrayList<>();
 
     private LocationManager mLocationManager = null;
     private static  int LOCATION_INTERVAL = 30000;
@@ -236,11 +237,21 @@ public class LocationMonitorService extends Service {
                     learnedPoints.add(tmpLatLog);
 
                 }else if(RUNNING_MOOD.equals(MainActivity.Constant.GARD_MOOD)){
-                    currentLocUrl = "http://maps.google.com?q="+location.getLatitude()+","+location.getLongitude();
-                    smsManager.sendTextMessage(PHONE_NO, null, "You child is going out..! Please pay the attention. Current location: "+currentLocUrl, null, null);
+                    if(isMovingAwayMore(location)){
+                        movingPointList.add(location);
+                        currentLocUrl = "http://maps.google.com?q="+location.getLatitude()+","+location.getLongitude()+"&z=13";
+                        smsManager.sendTextMessage(PHONE_NO, null, "Your child is going out from usual area..! Please pay the attention. Current location: "+currentLocUrl, null, null);
+
+                    }
 
                 }
 
+            }else{
+                if(movingPointList.size()>0){
+                    movingPointList.clear();
+                    smsManager.sendTextMessage(PHONE_NO, null, "Your child back to usual area..! Please do not worry. Current location: "+currentLocUrl, null, null);
+
+                }
             }
             //onLocationChanged(location);
         }
@@ -262,44 +273,15 @@ public class LocationMonitorService extends Service {
         }
     }
 
-    private class GardLocationListener implements LocationListener
-    {
-        Location mLastLocation;
-
-        public GardLocationListener(String provider)
-        {
-            Log.e(TAG, "LocationListener  " + provider);
-            mLastLocation = new Location(provider);
+    private boolean isMovingAwayMore(Location location) {
+        boolean status = false;
+        for (Location loc : movingPointList){
+            double tmpDist = loc.distanceTo(location);
+            if(tmpDist>MAX_DEVIATION){
+                status =true;
+            }
         }
-
-        @Override
-        public void onLocationChanged(Location location)
-        {
-            Log.e(TAG, "onLocationChanged: " + location);
-            LatLng tmpLatLog = new LatLng(location.getLatitude(),location.getLongitude());
-            //  mLastLocation.set(location);
-      //     Boolean status =  PolyUtil.isLocationOnEdge(tmpLatLog, learnedPoints, true, MAX_DISTANCE_OF_TWO_POINT );
-            /*if(status){
-
-            }*/
-            //onLocationChanged(location);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            Log.e(TAG, "onProviderDisabled: " + provider);
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            Log.e(TAG, "onProviderEnabled: " + provider);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-            Log.e(TAG, "onStatusChanged: " + provider);
-        }
+        return true;
     }
 
 

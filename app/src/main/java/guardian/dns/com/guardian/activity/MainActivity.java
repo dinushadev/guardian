@@ -117,12 +117,15 @@ public class MainActivity extends AppCompatActivity {
         AppUtill.setRunningMood(Constant.NOT_STARTED, getApplicationContext());
         if(mConnection!= null && mBound){
             try{
+                if(mService != null){
+                    mService.stopSelf();
+                }
                 getApplicationContext().unbindService(mConnection);
                 Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
                 stopService(locationServiceIntent);
                 Log.i(TAG, "Unbind and stop the service");
             }catch (Exception e){
-
+                Log.e(TAG,"error on "+e.getMessage());
             }
 
 
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), LocationMonitorService.class);
         //intent.putExtra("APP_MOOD", Constant.LEARNING_MOOD);
 
-        startService(intent);
+      //  startService(intent);
         if(AppUtill.getRunningMood(getApplicationContext()) != null && AppUtill.getRunningMood(getApplicationContext()).equals(Constant.LEARNING_MOOD)){
             startLearningBtn.setChecked(true);
             guardBtn.setChecked(false);
@@ -240,13 +243,19 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "M connection:"+mConnection+" mBound:"+mBound);
         if(mConnection!= null  && mBound){
             try{
+
                 getApplicationContext().unbindService(mConnection);
                 Intent locationServiceIntent = new Intent(this, LocationMonitorService.class);
+
+                if(mService != null){
+                    mService.stopService(locationServiceIntent);
+                }
                 stopService(locationServiceIntent);
+
 
                 Log.i(TAG, "Unbind and stop the service");
             }catch (Exception e){
-
+                Log.e(TAG,"error on "+e.getMessage());
             }
 
         }
@@ -262,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 getApplicationContext().unbindService(mConnection);
             }catch (Exception e){
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG,"error on "+e.getMessage());
             }
 
 

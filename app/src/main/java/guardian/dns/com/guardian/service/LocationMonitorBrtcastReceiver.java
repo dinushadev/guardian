@@ -11,7 +11,7 @@ public class LocationMonitorBrtcastReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent lMSvsIntent = new Intent(context,LocationMonitorService.class);
-        context.startService(lMSvsIntent);
+      //  Intent lMSvsIntent = new Intent(context,LocationMonitorService.class);
+       // context.startService(lMSvsIntent);
     }
 }
